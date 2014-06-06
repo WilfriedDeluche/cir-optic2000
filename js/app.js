@@ -42,8 +42,11 @@ var filterUnactiveAccessPrivileges = function(object) {
     if(value.active == true) {
       attributes.push(value);
     }
-    object.access_privileges_attributes = attributes;
   });
+  if (attributes.length > 0)
+    object.access_privileges_attributes = attributes;
+  else
+    delete object.access_privileges_attributes ;
 }
 
 var handleExistingMetadata = function(object) {
@@ -58,7 +61,6 @@ module.controller("FormController", function($scope, $http) {
   var mainCategoryFormAction = angular.element("form").attr("action") + ".json";
   var methodElement = angular.element("input[name=_method]");
   $scope.creationMode = true;
-  debugger;
   var httpMethod = "POST";
   if (methodElement != undefined && methodElement.length > 0) {
     httpMethod = methodElement.attr("value");
@@ -86,13 +88,14 @@ module.controller("FormController", function($scope, $http) {
   };
   
   $scope.save = function() {
-    //2. First save the main guest
+    
+    //1. First save the main guest
     filterUnactiveAccessPrivileges($scope.mainGuest);
-    debugger;
     var promise = $http({method: httpMethod, url: mainCategoryFormAction, data: { guest: $scope.mainGuest, authenticity_token: authenticityToken}})  
     promise.success(function(data, status, headers, config) {
       if ($scope.creationMode)
         return;
+
       //2. Then save the linked guests
       async.each($scope.linkedGuests, 
         function(linkedGuest, cbs){
@@ -105,7 +108,6 @@ module.controller("FormController", function($scope, $http) {
             cbs();
           });
           linkedGuestPromise.error(function(data, status, headers, config) {
-
             cbs({err:"Error", linkedGuest: linkedGuest, errors: data});
           });
         },
@@ -115,9 +117,6 @@ module.controller("FormController", function($scope, $http) {
           }
         }    
       );
-      $scope.linkedGuests.forEach(function(linkedGuest) {
-
-      });
     });
     promise.error(function(data, status, headers, config) {
       alert("Erreur, veuillez recommencer svp ...");
