@@ -12,19 +12,67 @@ var handleError  = function(error){
   
 };
 
+//This method makes sure that for an existing guest, access privileges are enriched using non active ones
+//And initializes access privileges for new guests
 var initAccessPrivileges = function(object) {
-  var checkinPoints = [
-    {name: "Déjeuner lundi", accesspoint_id: "7890876fffjhgjkljhgjk", active: 0 , web_form: 1},
-    {name: "Dîner paquebot", accesspoint_id: "7890876fffjhgjkljhgjk", active: 0, web_form: 1}
+  //List of accesspoint must be here
+  var accessPrivileges = [
+    {name: "Déjeuner lundi", accesspoint_id: "5391b394881b5a862f00001b", active: 0 , access_once: true},
+    {name: "Dîner paquebot", accesspoint_id: "5391b398881b5a862f000023", active: 0, access_once: true}
   ];
-  object.access_privileges_attributes = checkinPoints
+  var currentPrivileges = []
+  if (object.access_privileges && object.access_privileges.length > 0 )
+    angular.copy(object.access_privileges, currentPrivileges);
+  object.access_privileges = [];
+  angular.copy(accessPrivileges, object.access_privileges);
+  if (currentPrivileges && currentPrivileges.length > 0) {
+    object.access_privileges.forEach (function(accessPrivilege) {
+      currentPrivileges.forEach(function (ap) {
+        if (ap.accesspoint_id == accessPrivilege.accesspoint_id) {
+          accessPrivilege.active = true;
+        }
+      });
+    });
+  }
+}
+
+var filterUnactiveAccessPrivileges = function(object) {
+  attributes = []
+  object.access_privileges.forEach (function(value) {
+    if(value.active == true) {
+      attributes.push(value);
+    }
+    object.access_privileges_attributes = attributes;
+  });
+}
+
+var handleExistingMetadata = function(object) {
+  var existingMetadata =  angular.copy(object.guest_metadata);
+  object.guest_metadata = {};
+  existingMetadata.forEach(function(metadatum) {
+    object.guest_metadata[metadatum.name] = metadatum.value; 
+  });
 }
 
 module.controller("FormController", function($scope, $http) {
-  mainCategoryFormAction = angular.element("form").attr("action") + ".json";
+  var mainCategoryFormAction = angular.element("form").attr("action") + ".json";
+  var methodElement = angular.element("input[name=_method]");
+  $scope.creationMode = true;
+  debugger;
+  var httpMethod = "POST";
+  if (methodElement != undefined && methodElement.length > 0) {
+    httpMethod = methodElement.attr("value");
+  }
+  
   var authenticityToken = angular.element("input[name=authenticity_token]").attr("value");
   $scope.linkedGuests = [];
-  $scope.mainGuest = {}
+  if (window.GUEST != undefined) {
+    $scope.mainGuest = GUEST;
+    handleExistingMetadata($scope.mainGuest);
+    $scope.creationMode = false;    
+  } else {
+    $scope.mainGuest = {};
+  }
   initAccessPrivileges($scope.mainGuest);
 
   $scope.addLinkedGuest = function() {
@@ -39,11 +87,16 @@ module.controller("FormController", function($scope, $http) {
   
   $scope.save = function() {
     //2. First save the main guest
-    var promise = $http({method: "POST", url: mainCategoryFormAction, data: {guest: $scope.mainGuest, authenticity_token: authenticityToken}})  
+    filterUnactiveAccessPrivileges($scope.mainGuest);
+    debugger;
+    var promise = $http({method: httpMethod, url: mainCategoryFormAction, data: { guest: $scope.mainGuest, authenticity_token: authenticityToken}})  
     promise.success(function(data, status, headers, config) {
+      if ($scope.creationMode)
+        return;
       //2. Then save the linked guests
       async.each($scope.linkedGuests, 
         function(linkedGuest, cbs){
+          filterUnactiveAccessPrivileges(linkedGuest);
           var pathTokens = mainCategoryFormAction.split("/");
           pathTokens[pathTokens.length - 2] = LINKED_GUEST_GUESTCATEGORY_ID;
           var newPath = pathTokens.join("/");
@@ -52,6 +105,7 @@ module.controller("FormController", function($scope, $http) {
             cbs();
           });
           linkedGuestPromise.error(function(data, status, headers, config) {
+
             cbs({err:"Error", linkedGuest: linkedGuest, errors: data});
           });
         },
