@@ -12,26 +12,26 @@ var handleError  = function(error){
   
 };
 
+var initAccessPrivileges = function(object) {
+  var checkinPoints = [
+    {name: "Déjeuner lundi", accesspoint_id: "7890876fffjhgjkljhgjk", active: 0 , web_form: 1},
+    {name: "Dîner paquebot", accesspoint_id: "7890876fffjhgjkljhgjk", active: 0, web_form: 1}
+  ];
+  object.access_privileges_attributes = checkinPoints
+}
+
 module.controller("FormController", function($scope, $http) {
   mainCategoryFormAction = angular.element("form").attr("action") + ".json";
   var authenticityToken = angular.element("input[name=authenticity_token]").attr("value");
   $scope.linkedGuests = [];
-  
-  var checkinPoints = [
-    {name:"First", accesspoint_id: "7890876fffjhgjkljhgjk", active: 0 , web_form: 1},
-    {name:"Second", accesspoint_id: "7890876fffjhgjkljhgjk", active: 0, web_form: 1 }
-  ];
-  
+  $scope.mainGuest = {}
+  initAccessPrivileges($scope.mainGuest);
+
   $scope.addLinkedGuest = function() {
     var linkedGuest = {}
-    linkedGuest.access_privileges_attributes = []
-    checkinPoints.forEach(function (checkinPoint) {
-      linkedGuest.access_privileges_attributes.push(checkinPoint);
-    });
+    initAccessPrivileges(linkedGuest);
     $scope.linkedGuests.push(linkedGuest);
   };
-  
-
   
   $scope.removeLinkedguest = function(rank) {
     $scope.linkedGuests.splice(rank, 1);
