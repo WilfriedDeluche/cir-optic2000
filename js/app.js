@@ -1,5 +1,5 @@
 
-LINKED_GUEST_GUESTCATEGORY_ID = "538f3128881b5a0e26000018"
+LINKED_GUEST_GUESTCATEGORY_ID = "538f17814fba6e1aa600002d"
 
 //Mandatory for using angular template inside liquid templates
 var module = angular.module('myApp', []).config(function($interpolateProvider){
