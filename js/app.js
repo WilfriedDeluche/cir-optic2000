@@ -119,16 +119,16 @@ module.controller("FormController",function($scope, $http, $location) {
   
   $scope.linkedGuests = [];
   
-  //Create linked Guests from URL params
-  
-
-  for (var i = 2; i < 5; i+= 1) {
-    if (params["contact" + i + "_nom"] != undefined) {
-      var lg = {last_name: params["contact" + i + "_nom"]};
-      if (params["contact" + i + "_prenom"] != undefined) {
-        lf.first_name = params["contact" + i + "_prenom"];
+  if ($scope.creationMode) {
+    //Create linked Guests from URL params
+    for (var i = 2; i < 5; i+= 1) {
+      if (params["contact" + i + "_nom"] != undefined) {
+        var lg = {last_name: params["contact" + i + "_nom"]};
+        if (params["contact" + i + "_prenom"] != undefined) {
+          lf.first_name = params["contact" + i + "_prenom"];
+        }
+        $scope.linkedGuests.push(lg);
       }
-      $scope.linkedGuests.push(lg);
     }
   }
   
