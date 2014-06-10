@@ -17,9 +17,33 @@ var handleError  = function(error){
 var initAccessPrivileges = function(object) {
   //List of accesspoint must be here
   var accessPrivileges = [
-    {name: "Déjeuner lundi", accesspoint_id: "5391b394881b5a862f00001b", active: 0 , access_once: true},
-    {name: "Dîner paquebot", accesspoint_id: "5391b398881b5a862f000023", active: 0, access_once: true}
-  ];
+{ accesspoint_id: "5394dc6a007b3b61f300002b", name: "13/06/2014 - Vendredi - Novotel Tour Eiffel - DB", active:false, access_once: true},
+{ accesspoint_id: "5394dc5fdcecc4b18d000013", name: "13/06/2014 - Vendredi - Novotel Tour Eiffel - SG", active:false, access_once: true},
+{ accesspoint_id: "5394dc70dcecc4b18d000014", name: "13/06/2014 - Vendredi - Novotel Tour Eiffel - TW", active:false, access_once: true},
+{ accesspoint_id: "5394dc00007b3b61f3000027", name: "14/06/2014 - Samedi - Déjeuner répétition samedi", active:false, access_once: true},
+{ accesspoint_id: "5394dc06007b3b326c000035", name: "14/06/2014 - Samedi - Dîner répétition samedi", active:false, access_once: true},
+{ accesspoint_id: "5394dc76dcecc4828800003d", name: "14/06/2014 - Samedi - Novotel Tour Eiffel - DB", active:false, access_once: true},
+{ accesspoint_id: "5394dc7d007b3b61f300002c", name: "14/06/2014 - Samedi - Novotel Tour Eiffel - SG", active:false, access_once: true},
+{ accesspoint_id: "5394dc81dcecc4828800003e", name: "14/06/2014 - Samedi - Novotel Tour Eiffel - TP", active:false, access_once: true},
+{ accesspoint_id: "5394dc88007b3b61f300002d", name: "14/06/2014 - Samedi - Novotel Tour Eiffel - TW", active:false, access_once: true},
+{ accesspoint_id: "5394dc0c007b3b61f3000028", name: "15/06/2014 - Dimanche - Déjeuner d'accueil dimanche", active:false, access_once: true},
+{ accesspoint_id: "5394dc11007b3b61f3000029", name: "15/06/2014 - Dimanche - Déjeuner d'accueil dimanche enfant", active:false, access_once: true},
+{ accesspoint_id: "5394dc17dcecc48288000033", name: "15/06/2014 - Dimanche - Dîner Paquebot", active:false, access_once: true},
+{ accesspoint_id: "5394dc1bdcecc48288000034", name: "15/06/2014 - Dimanche - Dîner Paquebot enfant", active:false, access_once: true},
+{ accesspoint_id: "5394dc8d007b3b61f300002e", name: "15/06/2014 - Dimanche - Novotel Tour Eiffel - DB", active:false, access_once: true},
+{ accesspoint_id: "5394dc92dcecc4828800003f", name: "15/06/2014 - Dimanche - Novotel Tour Eiffel - SG", active:false, access_once: true},
+{ accesspoint_id: "5394dc97007b3b61f300002f", name: "15/06/2014 - Dimanche - Novotel Tour Eiffel - TP", active:false, access_once: true},
+{ accesspoint_id: "5394dc9ddcecc48288000042", name: "15/06/2014 - Dimanche - Novotel Tour Eiffel - TW", active:false, access_once: true},
+{ accesspoint_id: "5394dc21007b3b326c000036", name: "16/06/2014 - Lundi - Déjeuner lundi", active:false, access_once: true},
+{ accesspoint_id: "5394dc26007b3b61f300002a", name: "16/06/2014 - Lundi - Déjeuner lundi enfant", active:false, access_once: true},
+{ accesspoint_id: "5394dca2dcecc48288000043", name: "16/06/2014 - Lundi - Novotel Tour Eiffel - DB", active:false, access_once: true},
+{ accesspoint_id: "5394dca7007b3b61f3000030", name: "16/06/2014 - Lundi - Novotel Tour Eiffel - SG", active:false, access_once: true},
+{ accesspoint_id: "5394dcacdcecc48288000044", name: "16/06/2014 - Lundi - Novotel Tour Eiffel - TP", active:false, access_once: true},
+{ accesspoint_id: "5394dcb2007b3b326c000037", name: "16/06/2014 - Lundi - Novotel Tour Eiffel - TW", active:false, access_once: true},
+{ accesspoint_id: "5394dcbf007b3b326c000038", name: "Assemblée Générale", active:false, access_once: true},
+{ accesspoint_id: "538c7d85f47d4789c0000032", name: "Entrée", active:false, access_once: true},
+{ accesspoint_id: "5394dcc7007b3b326c000039", name: "congres", active:false, access_once: true}
+];
   var currentPrivileges = []
   if (object.access_privileges && object.access_privileges.length > 0 )
     angular.copy(object.access_privileges, currentPrivileges);
@@ -57,7 +81,17 @@ var handleExistingMetadata = function(object) {
   });
 }
 
-module.controller("FormController", function($scope, $http) {
+function urlParams(name) {
+    // var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+//     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+  var queryDict = {}
+  location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]})
+  return queryDict;
+}
+
+module.controller("FormController",function($scope, $http, $location) {
+
+  //Configure global behaviour
   var mainCategoryFormAction = angular.element("form").attr("action") + ".json";
   var methodElement = angular.element("input[name=_method]");
   $scope.creationMode = true;
@@ -65,9 +99,9 @@ module.controller("FormController", function($scope, $http) {
   if (methodElement != undefined && methodElement.length > 0) {
     httpMethod = methodElement.attr("value");
   }
-  
   var authenticityToken = angular.element("input[name=authenticity_token]").attr("value");
-  $scope.linkedGuests = [];
+  
+  //Configure mainGuest
   if (window.GUEST != undefined) {
     $scope.mainGuest = GUEST;
     handleExistingMetadata($scope.mainGuest);
@@ -75,8 +109,29 @@ module.controller("FormController", function($scope, $http) {
   } else {
     $scope.mainGuest = {};
   }
+  
+  //Pre-fill mainGuest
+  var params = urlParams();
+  for (key in params) {
+    $scope.mainGuest[key] = params[key];
+  }
   initAccessPrivileges($scope.mainGuest);
+  
+  $scope.linkedGuests = [];
+  
+  //Create linked Guests from URL params
+  
 
+  for (var i = 2; i < 5; i+= 1) {
+    if (params["contact" + i + "_nom"] != undefined) {
+      var lg = {last_name: params["contact" + i + "_nom"]};
+      if (params["contact" + i + "_prenom"] != undefined) {
+        lf.first_name = params["contact" + i + "_prenom"];
+      }
+      $scope.linkedGuests.push(lg);
+    }
+  }
+  
   $scope.addLinkedGuest = function() {
     var linkedGuest = {}
     initAccessPrivileges(linkedGuest);
