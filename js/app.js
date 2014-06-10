@@ -125,7 +125,7 @@ module.controller("FormController",function($scope, $http, $location) {
       if (params["contact" + i + "_nom"] != undefined) {
         var lg = {last_name: params["contact" + i + "_nom"]};
         if (params["contact" + i + "_prenom"] != undefined) {
-          lf.first_name = params["contact" + i + "_prenom"];
+          lg.first_name = params["contact" + i + "_prenom"];
         }
         $scope.linkedGuests.push(lg);
       }
