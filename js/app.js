@@ -1,4 +1,4 @@
-
+//Angular.js app
 LINKED_GUEST_GUESTCATEGORY_ID = "538f17814fba6e1aa600002d"
 
 //Mandatory for using angular template inside liquid templates
