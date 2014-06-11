@@ -89,6 +89,20 @@ function urlParams(name) {
   return queryDict;
 }
 
+function fillLinkedGuestFromParams(params) {
+  var linkedGuests = [];
+  for (var i = 2; i < 5; i+= 1) {
+    if (params["contact" + i + "_nom"] != undefined) {
+      var lg = {last_name: params["contact" + i + "_nom"]};
+      if (params["contact" + i + "_prenom"] != undefined) {
+        lg.first_name = params["contact" + i + "_prenom"];
+      }
+      linkedGuests.push(lg);
+    }
+  }
+  return linkedGuests;
+}
+
 module.controller("FormController",function($scope, $http, $location) {
 
   //Configure global behaviour
@@ -99,13 +113,15 @@ module.controller("FormController",function($scope, $http, $location) {
   if (methodElement != undefined && methodElement.length > 0) {
     httpMethod = methodElement.attr("value");
   }
+  if (httpMethod != "POST") {
+    $scope.creationMode = false;
+  }
   var authenticityToken = angular.element("input[name=authenticity_token]").attr("value");
   
   //Configure mainGuest
   if (window.GUEST != undefined) {
     $scope.mainGuest = GUEST;
     handleExistingMetadata($scope.mainGuest);
-    $scope.creationMode = false;    
   } else {
     $scope.mainGuest = {};
   }
@@ -120,16 +136,11 @@ module.controller("FormController",function($scope, $http, $location) {
   $scope.linkedGuests = [];
   
   if ($scope.creationMode) {
-    //Create linked Guests from URL params
-    for (var i = 2; i < 5; i+= 1) {
-      if (params["contact" + i + "_nom"] != undefined) {
-        var lg = {last_name: params["contact" + i + "_nom"]};
-        if (params["contact" + i + "_prenom"] != undefined) {
-          lg.first_name = params["contact" + i + "_prenom"];
-        }
-        $scope.linkedGuests.push(lg);
-      }
-    }
+    //fill in from params
+    $scope.linkedGuests = fillLinkedGuestFromParams(params);
+    //fill in from existing guest. Will be triggered for receiver, and not in update mode since we are in creation mode
+    if ($scope.mainGuest.guest_metadata != undefined)
+      $scope.linkedGuests = fillLinkedGuestFromParams($scope.mainGuest.guest_metadata);
   }
   
   $scope.addLinkedGuest = function() {
