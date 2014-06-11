@@ -92,7 +92,7 @@ function urlParams(name) {
 function fillLinkedGuestFromParams(params) {
   var linkedGuests = [];
   for (var i = 2; i < 5; i+= 1) {
-    if (params["contact" + i + "_nom"] != undefined) {
+    if (params["contact" + i + "_nom"] != undefined && params["contact" + i + "_nom"].length != 0 ) {
       var lg = {last_name: params["contact" + i + "_nom"]};
       if (params["contact" + i + "_prenom"] != undefined) {
         lg.first_name = params["contact" + i + "_prenom"];
