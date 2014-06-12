@@ -159,8 +159,14 @@ module.controller("FormController",function($scope, $http, $location) {
     filterUnactiveAccessPrivileges($scope.mainGuest);
     var promise = $http({method: httpMethod, url: mainCategoryFormAction, data: { guest: $scope.mainGuest, authenticity_token: authenticityToken}})  
     promise.success(function(data, status, headers, config) {
-      if ($scope.creationMode)
+      var redirectToPage = function() {
+        var confirmationUrl = data.confirmation_url;
+        window.location = confirmationUrl;
+      };
+      if ($scope.creationMode == false) {
+        redirectToPage();
         return;
+      }
 
       //2. Then save the linked guests
       async.each($scope.linkedGuests, 
@@ -180,6 +186,8 @@ module.controller("FormController",function($scope, $http, $location) {
         function(err) {
           if (err) {
             handleError(err);
+          } else {
+            redirectToPage();
           }
         }    
       );
