@@ -89,7 +89,7 @@ function urlParams(name) {
   return queryDict;
 }
 
-function fillLinkedGuestFromParams(params) {
+function fillLinkedGuestFromParams(scope, params) {
   var linkedGuests = [];
   for (var i = 2; i < 5; i+= 1) {
     if (params["contact" + i + "_nom"] != undefined && params["contact" + i + "_nom"].length != 0 ) {
@@ -97,6 +97,7 @@ function fillLinkedGuestFromParams(params) {
       if (params["contact" + i + "_prenom"] != undefined) {
         lg.first_name = params["contact" + i + "_prenom"];
       }
+      initAccessPrivileges(lg);
       linkedGuests.push(lg);
     }
   }
@@ -137,10 +138,10 @@ module.controller("FormController",function($scope, $http, $location) {
   
   if ($scope.creationMode) {
     //fill in from params
-    $scope.linkedGuests = fillLinkedGuestFromParams(params);
+    $scope.linkedGuests = fillLinkedGuestFromParams($scope, params);
     //fill in from existing guest. Will be triggered for receiver, and not in update mode since we are in creation mode
     if ($scope.mainGuest.guest_metadata != undefined)
-      $scope.linkedGuests = fillLinkedGuestFromParams($scope.mainGuest.guest_metadata);
+      $scope.linkedGuests = fillLinkedGuestFromParams($scope, $scope.mainGuest.guest_metadata);
   }
   
   $scope.addLinkedGuest = function() {
