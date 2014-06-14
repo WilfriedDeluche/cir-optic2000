@@ -122,7 +122,6 @@ module.controller("FormController",function($scope, $http, $location) {
     httpMethod = methodElement.attr("value");
   }
   if (httpMethod != "POST") {
-    mainCategoryFormAction = formAction; //Don't use json PUT here, it does not work in production
     var redirectPath = angular.element("#url_back").val();
     $scope.creationMode = false;
   }
