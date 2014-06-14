@@ -117,13 +117,14 @@ module.controller("FormController",function($scope, $http, $location) {
   var mainCategoryFormAction = formAction + ".json";
   var methodElement = angular.element("input[name=_method]");
   $scope.creationMode = true;
+
   var httpMethod = "POST";
   if (methodElement != undefined && methodElement.length > 0) {
     httpMethod = methodElement.attr("value");
   }
-  var redirectPath = null;
+  $scope.redirPath = null;
   if (httpMethod != "POST") {
-    redirectPath = angular.element("#url_back").val();
+    $scope.redirPath = angular.element("#url_back").val();
     $scope.creationMode = false;
   }
   var authenticityToken = angular.element("input[name=authenticity_token]").attr("value");
@@ -170,10 +171,10 @@ module.controller("FormController",function($scope, $http, $location) {
     var promise = $http({method: httpMethod, url: mainCategoryFormAction, data: { guest: $scope.mainGuest, authenticity_token: authenticityToken}})  
     promise.success(function(data, status, headers, config) {
       var redirectToPage = function() {
-        if (redirectPath == null) {
-          var redirectPath = data.confirmation_url;
+        if ($scope.redirPath == null) {
+          $scope.redirPath = data.confirmation_url;
         }
-        window.location = redirectPath;
+        window.location = $scope.redirPath;
       };
       if ($scope.creationMode == false) {
         redirectToPage();
