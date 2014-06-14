@@ -121,8 +121,9 @@ module.controller("FormController",function($scope, $http, $location) {
   if (methodElement != undefined && methodElement.length > 0) {
     httpMethod = methodElement.attr("value");
   }
+  var redirectPath == null;
   if (httpMethod != "POST") {
-    var redirectPath = angular.element("#url_back").val();
+    redirectPath = angular.element("#url_back").val();
     $scope.creationMode = false;
   }
   var authenticityToken = angular.element("input[name=authenticity_token]").attr("value");
@@ -169,7 +170,7 @@ module.controller("FormController",function($scope, $http, $location) {
     var promise = $http({method: httpMethod, url: mainCategoryFormAction, data: { guest: $scope.mainGuest, authenticity_token: authenticityToken}})  
     promise.success(function(data, status, headers, config) {
       var redirectToPage = function() {
-        if (redirectPath == undefined) {
+        if (redirectPath == null) {
           var redirectPath = data.confirmation_url;
         }
         window.location = redirectPath;
