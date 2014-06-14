@@ -121,7 +121,7 @@ module.controller("FormController",function($scope, $http, $location) {
   if (methodElement != undefined && methodElement.length > 0) {
     httpMethod = methodElement.attr("value");
   }
-  var redirectPath == null;
+  var redirectPath = null;
   if (httpMethod != "POST") {
     redirectPath = angular.element("#url_back").val();
     $scope.creationMode = false;
