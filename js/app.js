@@ -104,10 +104,17 @@ function fillLinkedGuestFromParams(scope, params) {
   return linkedGuests;
 }
 
+function swapFields(guest, field1, field2) {
+  var previsouField1 = guest[field1];
+  guest[field1] = guest[field2];
+  guest[field2] = previsouField1;
+}
+
 module.controller("FormController",function($scope, $http, $location) {
 
   //Configure global behaviour
-  var mainCategoryFormAction = angular.element("form").attr("action") + ".json";
+  var formAction = angular.element("form").attr("action");
+  var mainCategoryFormAction = formAction + ".json";
   var methodElement = angular.element("input[name=_method]");
   $scope.creationMode = true;
   var httpMethod = "POST";
@@ -115,6 +122,8 @@ module.controller("FormController",function($scope, $http, $location) {
     httpMethod = methodElement.attr("value");
   }
   if (httpMethod != "POST") {
+    mainCategoryFormAction = formAction; //Don't use json PUT here, it does not work in production
+    var redirectPath = angular.element("#url_back").val();
     $scope.creationMode = false;
   }
   var authenticityToken = angular.element("input[name=authenticity_token]").attr("value");
@@ -161,8 +170,10 @@ module.controller("FormController",function($scope, $http, $location) {
     var promise = $http({method: httpMethod, url: mainCategoryFormAction, data: { guest: $scope.mainGuest, authenticity_token: authenticityToken}})  
     promise.success(function(data, status, headers, config) {
       var redirectToPage = function() {
-        var confirmationUrl = data.confirmation_url;
-        window.location = confirmationUrl;
+        if (redirectPath == undefined) {
+          var redirectPath = data.confirmation_url;
+        }
+        window.location = redirectPath;
       };
       if ($scope.creationMode == false) {
         redirectToPage();
