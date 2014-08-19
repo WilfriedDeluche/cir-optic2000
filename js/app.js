@@ -1,5 +1,5 @@
 //Angular.js app
-LINKED_GUEST_GUESTCATEGORY_ID = "538f17814fba6e1aa600002d"
+LINKED_GUEST_GUESTCATEGORY_ID = "53f3489d847588c3e2000363"
 
 //Mandatory for using angular template inside liquid templates
 var module = angular.module('myApp', []).config(function($interpolateProvider){
@@ -9,7 +9,7 @@ var module = angular.module('myApp', []).config(function($interpolateProvider){
 
 var handleError  = function(error){
   linkedGuestError = error.linkedGuest;
-  
+
 };
 
 //This method makes sure that for an existing guest, access privileges are enriched using non active ones
@@ -77,7 +77,7 @@ var handleExistingMetadata = function(object) {
   var existingMetadata =  angular.copy(object.guest_metadata);
   object.guest_metadata = {};
   existingMetadata.forEach(function(metadatum) {
-    object.guest_metadata[metadatum.name] = metadatum.value; 
+    object.guest_metadata[metadatum.name] = metadatum.value;
   });
 }
 
@@ -128,7 +128,7 @@ module.controller("FormController",function($scope, $http, $location) {
     $scope.creationMode = false;
   }
   var authenticityToken = angular.element("input[name=authenticity_token]").attr("value");
-  
+
   //Configure mainGuest
   if (window.GUEST != undefined) {
     $scope.mainGuest = GUEST;
@@ -136,16 +136,16 @@ module.controller("FormController",function($scope, $http, $location) {
   } else {
     $scope.mainGuest = {};
   }
-  
+
   //Pre-fill mainGuest
   var params = urlParams();
   for (key in params) {
     $scope.mainGuest[key] = params[key];
   }
   initAccessPrivileges($scope.mainGuest);
-  
+
   $scope.linkedGuests = [];
-  
+
   if ($scope.creationMode) {
     //fill in from params
     $scope.linkedGuests = fillLinkedGuestFromParams($scope, params);
@@ -153,22 +153,22 @@ module.controller("FormController",function($scope, $http, $location) {
     if ($scope.mainGuest.guest_metadata != undefined)
       $scope.linkedGuests = fillLinkedGuestFromParams($scope, $scope.mainGuest.guest_metadata);
   }
-  
+
   $scope.addLinkedGuest = function() {
     var linkedGuest = {}
     initAccessPrivileges(linkedGuest);
     $scope.linkedGuests.push(linkedGuest);
   };
-  
+
   $scope.removeLinkedguest = function(rank) {
     $scope.linkedGuests.splice(rank, 1);
   };
-  
+
   $scope.save = function() {
-    
+
     //1. First save the main guest
     filterUnactiveAccessPrivileges($scope.mainGuest);
-    var promise = $http({method: httpMethod, url: mainCategoryFormAction, data: { guest: $scope.mainGuest, authenticity_token: authenticityToken}})  
+    var promise = $http({method: httpMethod, url: mainCategoryFormAction, data: { guest: $scope.mainGuest, authenticity_token: authenticityToken}})
     promise.success(function(data, status, headers, config) {
       var redirectToPage = function() {
         if ($scope.redirPath == null) {
@@ -182,13 +182,13 @@ module.controller("FormController",function($scope, $http, $location) {
       }
 
       //2. Then save the linked guests
-      async.each($scope.linkedGuests, 
+      async.each($scope.linkedGuests,
         function(linkedGuest, cbs){
           filterUnactiveAccessPrivileges(linkedGuest);
           var pathTokens = mainCategoryFormAction.split("/");
           pathTokens[pathTokens.length - 2] = LINKED_GUEST_GUESTCATEGORY_ID;
           var newPath = pathTokens.join("/");
-          var linkedGuestPromise = $http({method: "POST", url: newPath, data: {guest: linkedGuest, authenticity_token: authenticityToken}})  
+          var linkedGuestPromise = $http({method: "POST", url: newPath, data: {guest: linkedGuest, authenticity_token: authenticityToken}})
           linkedGuestPromise.success(function(data, status, headers, config) {
             cbs();
           });
@@ -202,7 +202,7 @@ module.controller("FormController",function($scope, $http, $location) {
           } else {
             redirectToPage();
           }
-        }    
+        }
       );
     });
     promise.error(function(data, status, headers, config) {
