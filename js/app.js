@@ -34,7 +34,6 @@ var initAccessPrivileges = function(object) {
 { accesspoint_id: "53f36d768f8a684528000235", name: "Management 17h30", active:false, access_once: true},
 { accesspoint_id: "53f36d8585cb23bf290005cb", name: "Direction 16h", active:false, access_once: true},
 { accesspoint_id: "53f36d8c8f8a684528000236", name: "Direction 17h30", active:false, access_once: true},
-{ accesspoint_id: "53f22cd685cb23bf290002ac", name: "Entrée", active:false, access_once: true},
 ];
   var currentPrivileges = []
   if (object.access_privileges && object.access_privileges.length > 0 )
