@@ -16,7 +16,7 @@ var handleError  = function(error){
 //And initializes access privileges for new guests
 var initAccessPrivileges = function(object) {
   //List of accesspoint must be here
-  var accessPrivileges = privileges;
+  var accessPrivileges = [];
   var currentPrivileges = []
   if (object.access_privileges && object.access_privileges.length > 0 )
     angular.copy(object.access_privileges, currentPrivileges);
