@@ -16,25 +16,7 @@ var handleError  = function(error){
 //And initializes access privileges for new guests
 var initAccessPrivileges = function(object) {
   //List of accesspoint must be here
-  var accessPrivileges = [
-{ accesspoint_id: "53f36c5985cb23bf290005a9", name: "Contacto 11h", active:false, access_once: true},
-{ accesspoint_id: "53f36c6b85cb234d62000113", name: "Contacto 16h", active:false, access_once: true},
-{ accesspoint_id: "53f36c7385cb23bf290005ad", name: "Contacto 17h30", active:false, access_once: true},
-{ accesspoint_id: "53f36cd68f8a685c9a0004db", name: "Métier 11h", active:false, access_once: true},
-{ accesspoint_id: "53f36cde8f8a684528000226", name: "Métier 16h", active:false, access_once: true},
-{ accesspoint_id: "53f36ce88f8a684528000227", name: "Métier 17h30", active:false, access_once: true},
-{ accesspoint_id: "53f36cff85cb23bf290005b4", name: "Simag 2 11h", active:false, access_once: true},
-{ accesspoint_id: "53f36d078f8a68452800022b", name: "Simag 2 16h", active:false, access_once: true},
-{ accesspoint_id: "53f36d1085cb234d62000117", name: "Simag 2 17h30", active:false, access_once: true},
-{ accesspoint_id: "53f36d1f85cb234d62000119", name: "Vente 11h", active:false, access_once: true},
-{ accesspoint_id: "53f36d288f8a685c9a0004dc", name: "Vente 16h", active:false, access_once: true},
-{ accesspoint_id: "53f36d4f85cb23bf290005c1", name: "Vente 17h30", active:false, access_once: true},
-{ accesspoint_id: "53f36d688f8a684528000234", name: "Management 11h", active:false, access_once: true},
-{ accesspoint_id: "53f36d6e85cb23bf290005c7", name: "Management 16h", active:false, access_once: true},
-{ accesspoint_id: "53f36d768f8a684528000235", name: "Management 17h30", active:false, access_once: true},
-{ accesspoint_id: "53f36d8585cb23bf290005cb", name: "Direction 16h", active:false, access_once: true},
-{ accesspoint_id: "53f36d8c8f8a684528000236", name: "Direction 17h30", active:false, access_once: true},
-];
+  var accessPrivileges = privileges;
   var currentPrivileges = []
   if (object.access_privileges && object.access_privileges.length > 0 )
     angular.copy(object.access_privileges, currentPrivileges);
